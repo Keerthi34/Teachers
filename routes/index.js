@@ -47,6 +47,32 @@ router.get('/getteachers/:School_Id',function(req,res,next){
   })
 })
 
+/*Fetch all matching id's using array*/
+router.get('/getschools',function(req,res,next){
+  winston.log('info',"Info: Get teachers from particular school")
+  Teacher.find({School_Id:  { $in:["S345", "S346"] }},function(err,data){
+   //db.things.find({ words: { $in: ["text", "here"] }});
+    if(err)
+    res.status(500).send(err);
+    else {
+      res.status(200).json(data);
+    }
+  })
+})
+
+/*Fetch all matching records of teachers using array*/
+router.get('/getallteachers/:School_Id',function(req,res,next){
+  winston.log('info',"Info: Get teachers from particular school")
+  Teacher.find({School_Id:req.params.School_Id, Teacher_Id:{ $in:["T6", "T5"] }},function(err,data){
+   //db.things.find({ words: { $in: ["text", "here"] }});
+    if(err)
+    res.status(500).send(err);
+    else {
+      res.status(200).json(data);
+    }
+  })
+})
+
 
 /*Get particular teacher details using school and teacher Id */
 router.get('/getteacher/:School_Id/:Teacher_Id',function(req,res,next){
@@ -78,11 +104,13 @@ router.get('/delete/:School_Id/:Teacher_Id',function(req,res,next){
 /* Add teachers */
 router.post('/add',function(req,res,next){
   winston.log('info',"Info level")
+//  var i=document.getElementByName("Gender").value;
   var t=new Teacher({
     School_Id:req.body.School_Id,
     Teacher_Id:1,
     First_Name: req.body.First_Name,
     Last_Name: req.body.Last_Name,
+    Gender: req.body.gender,
     Date_of_birth:req.body.Date_of_birth,
     Age: req.body.Age,
     Qualification:  req.body.Qualification,
@@ -90,6 +118,7 @@ router.post('/add',function(req,res,next){
     Package: req.body.Package,
     Address:req.body.Address,
     Phone_Number:  req.body.Phone_Number,
+    Previous_School:req.body.Previous_School
   })
   t.save(function(err,suc){
     if(err)
@@ -124,7 +153,7 @@ router.post('/add',function(req,res,next){
 
 /* Update particular teacher details */
 router.put('/update/:School_Id/:Teacher_Id', function(req,res,next){
-  winston.log('info',"Info level")
+  winston.log('info',"Info level");
 var query={School_Id: req.params.School_Id,
              Teacher_Id:req.params.Teacher_Id};
       Teacher.update(query, req.body, function(err,data){
@@ -135,7 +164,18 @@ var query={School_Id: req.params.School_Id,
 
   })
 })
+router.put('/update2/:Teacher_Name', function(req,res,next){
+  winston.log('info',"Info level")
+var query={Teacher_Name: req.params.Teacher_Name};
+      Teacher.update(query, req.body, function(err,data){
+                   if(err) res.status(404).json(err);
+                   else {
+                     res.status(202).json(data)
+                   }
 
+
+  })
+})
 
 
 module.exports = router;

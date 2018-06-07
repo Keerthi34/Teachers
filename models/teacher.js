@@ -9,6 +9,7 @@ var schema= new Schema({
     "Teacher_Id":{type:String},
     "First_Name": {type:String, required:true},
     "Last_Name": {type:String, required:true},
+    "Gender":{type:String},
     "Date_of_birth": {type:String},
     "Age": {type:Number},
     "Qualification": {type:String, required:true},
@@ -16,6 +17,7 @@ var schema= new Schema({
     "Package": {type:String, required:true},
      "Address":{type:String, required:true},
     "Phone_Number":  {type:Number},
+    "Previous_School":{type:String}
 
 })
 
