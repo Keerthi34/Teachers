@@ -7,17 +7,18 @@ var Schema = mongoose.Schema;
 var schema= new Schema({
     "School_Id" : {type:String},
     "Teacher_Id":{type:String},
-    "First_Name": {type:String, required:true},
-    "Last_Name": {type:String, required:true},
+    "First_Name": {type:String},
+    "Last_Name": {type:String},
     "Gender":{type:String},
     "Date_of_birth": {type:String},
     "Age": {type:Number},
-    "Qualification": {type:String, required:true},
-    "Experience": {type:String, required:true},
-    "Package": {type:String, required:true},
-     "Address":{type:String, required:true},
+    "Qualification": {type:String},
+    "Experience": {type:String},
+    "Package": {type:String},
+     "Address":{type:String},
     "Phone_Number":  {type:Number},
-    "Previous_School":{type:String}
+    "Previous_School":{type:String},
+    "Email_id":{type:String}
 
 })
 

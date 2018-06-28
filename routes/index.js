@@ -2,6 +2,43 @@ var express = require('express');
 var router = express.Router();
 var winston = require('winston');
 var Teacher= require('../models/teacher');
+var Password= require('../models/password');
+
+var http = require("http");
+var nodemailer = require('nodemailer');
+var bodyParser = require('body-parser');
+var path = require('path');
+var xoauth2 = require('xoauth2');
+
+
+/*gmail authorization to send emails to the users*/
+let transporter = nodemailer.createTransport({
+    service:'gmail',
+
+    auth: {
+      xoauth2: xoauth2.createXOAuth2Generator({
+        user: 'keerthi.regnis@gmail.com',
+
+  clientId: '487571564592-ebi9vkjo2tk10um0fq26gkn0k3u6v9vm.apps.googleusercontent.com',
+  clientSecret: 'wwo0sYyKHTNzl9UJwgXDXBPc',
+  refreshToken: '1/t87TEHx9TY6wr_KuoHhmbch7084TVjZxX51jRlDnaj0qWbtHhczmvLiFkSv28HFd'
+
+ })
+}
+});
+
+var email_smtp = nodemailer.createTransport({
+  host: "smtp.gmail.com",
+  auth: {
+    type: "OAuth2",
+    user: 'keerthi.regnis@gmail.com',
+
+clientId: '487571564592-ebi9vkjo2tk10um0fq26gkn0k3u6v9vm.apps.googleusercontent.com',
+clientSecret: 'wwo0sYyKHTNzl9UJwgXDXBPc',
+refreshToken: '1/t87TEHx9TY6wr_KuoHhmbch7084TVjZxX51jRlDnaj0qWbtHhczmvLiFkSv28HFd'
+  }
+});
+
 
 /*Logger*/
 winston.add(
@@ -33,6 +70,19 @@ router.get('/fetch', function(req, res, next) {
       }
   })
 });
+
+
+/* Get teachers details of a particular teacher */
+router.get('/teacher/:_id',function(req,res,next){
+  winston.log('info',"Info: Get teacher details")
+  Teacher.find({_id:req.params._id},function(err,data){
+    if(err)
+    res.status(500).send(err);
+    else {
+      res.status(200).json(data);
+    }
+  })
+})
 
 
 /* Get teachers details of a particular school */
@@ -104,7 +154,7 @@ router.get('/delete/:School_Id/:Teacher_Id',function(req,res,next){
 /* Add teachers */
 router.post('/add',function(req,res,next){
   winston.log('info',"Info level")
-//  var i=document.getElementByName("Gender").value;
+
   var t=new Teacher({
     School_Id:req.body.School_Id,
     Teacher_Id:1,
@@ -118,7 +168,8 @@ router.post('/add',function(req,res,next){
     Package: req.body.Package,
     Address:req.body.Address,
     Phone_Number:  req.body.Phone_Number,
-    Previous_School:req.body.Previous_School
+    Previous_School:req.body.Previous_School,
+    Email_id:req.body.Email_id
   })
   t.save(function(err,suc){
     if(err)
@@ -134,8 +185,24 @@ router.post('/add',function(req,res,next){
 })
 
 })
-    //  res.send(suc)
-    }
+
+//mailing
+var mailOptions = {
+          from: 'keerthi.regnis@gmail.com', // sender address
+          to: req.body.Email_id, // list of receivers
+          subject: 'link to change password', // Subject line
+          text: 'http://10.10.5.49:4200/teacherpassword/'+suc._id           +'     Click on the link' // html body
+      };
+      email_smtp.sendMail(mailOptions, (error, info) => {
+          if (error) {
+              res.send("dsfds "+error);
+          }else {
+            res.send(info);
+          }
+          });
+
+            //  res.send(suc)
+        }
     function getNextSequenceValue(sequenceName){
 
       var sequenceDocument = db.counters.findOneAndUpdate(
@@ -148,6 +215,41 @@ router.post('/add',function(req,res,next){
 
 })
 
+})
+
+
+/*save password*/
+router.post('/password/:_id', function(req,res,next){
+
+  var t= new Password({
+    Id:req.body.Id,
+
+    Password:req.body.Password
+
+  })
+
+    t.save(function(err,suc){
+      if(err)
+      res.send(err)
+      else
+      return res.status(201).send({"Message":"Created", type:"internal"});
+  })
+
+
+})
+
+
+/* Get all user records who got registered *passwords* */
+router.get('/getuserdata', function(req, res, next) {
+  winston.log('info',"Info: Get all records")
+  console.log("info");
+  Password.find({},function(err,data){
+      if(err)
+      res.status(500).send(err);
+      else {
+        res.status(200).json(data);
+      }
+  });
 })
 
 

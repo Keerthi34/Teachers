@@ -8,9 +8,14 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var bodyParser = require('body-parser');
 
+var nodemailer = require("nodemailer");
+var email = require('mailer');
+var http = require("http");
+
 var app = express();
 var cors=require('cors')
 var Teacher= require('./models/teacher');
+var Password= require('./models/password');
 var winston =require('winston')
 
 
