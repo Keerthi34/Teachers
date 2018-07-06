@@ -191,7 +191,7 @@ var mailOptions = {
           from: 'keerthi.regnis@gmail.com', // sender address
           to: req.body.Email_id, // list of receivers
           subject: 'link to change password', // Subject line
-          text: 'http://10.10.5.54:4200/changepassword/'+suc._id                       +'     Click on the link' // html body
+          text: 'http://10.10.5.54:4200/teacherpassword/'+suc._id                       +'     Click on the link' // html body
       };
       email_smtp.sendMail(mailOptions, (error, info) => {
           if (error) {
@@ -221,12 +221,9 @@ var mailOptions = {
 /*save password*/
 router.post('/password/:_id', function(req,res,next){
 
-  var t= new Password({
-    Id:req.body.Id,
-
-    Password:req.body.Password
-
-  })
+  var t= new Password(
+      req.body
+  )
 
     t.save(function(err,suc){
       if(err)
